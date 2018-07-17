@@ -53,3 +53,4 @@ spring:
 # mybatis
 mybatis:
   type-aliases-package: com.prostate.*.entity
+  mapper-locations: "classpath*:mapping/master/*.xml"

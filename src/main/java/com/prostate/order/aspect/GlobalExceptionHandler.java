@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
      * @return
      * @throws Exception
      */
-    @ExceptionHandler(value = Exception.class)
+   @ExceptionHandler(value = Exception.class)
     public Map<String,Object> allExceptionHandler(HttpServletRequest request, Exception exception) throws Exception {
         resultMap = new LinkedHashMap<>();
         log.error("我报错了：{}",exception.getLocalizedMessage());
@@ -60,5 +60,8 @@ public class GlobalExceptionHandler {
         }
         return fieldErrorsMap;
     }
+
+
+
 
 }
