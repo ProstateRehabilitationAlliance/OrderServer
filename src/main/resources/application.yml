@@ -1,0 +1,55 @@
+#  cloud:
+#    config:
+#      uri: http://localhost:8880
+#      profile: dev
+#      label: master
+server:
+  port: 8901
+spring:
+  application:
+    name: order-server
+  profiles:
+    active: dev
+  datasource:
+    writePra:
+      url: jdbc:mysql://bj-cdb-0srt3yo9.sql.tencentcdb.com:63422/dev_master_pra?characterEncoding=utf-8
+      username: root
+      password: Qlxlm123456
+      driver-class-name: com.mysql.jdbc.Driver
+    readPra:
+      url: jdbc:mysql://bj-cdb-0srt3yo9.sql.tencentcdb.com:63422/dev_master_pra?characterEncoding=utf-8
+      username: root
+      password: Qlxlm123456
+      driver-class-name: com.mysql.jdbc.Driver
+#  cloud:
+#    discovery:
+#      enabled: true
+#      serviceId: eureka-server
+  redis:
+  #################redis基础配置#################
+    database: 8
+#    host: 192.168.0.63
+    host: 127.0.0.1
+    password:
+    port: 6379
+    timeout: 5000
+  #################redis线程池设置#################
+    jedis:
+      pool:
+        max-idle: 500
+        min-idle: 50
+        max-active: 2000
+        max-wait: 1000
+
+#eureka:
+#  client:
+#    serviceUrl:
+#      defaultZone:  http://localhost:8888/eureka/
+#
+#feign:
+#  hystrix:
+#    enabled: true
+
+# mybatis
+mybatis:
+  type-aliases-package: com.prostate.*.entity
