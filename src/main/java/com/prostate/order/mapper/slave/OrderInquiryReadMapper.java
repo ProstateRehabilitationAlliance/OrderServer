@@ -13,4 +13,5 @@ import java.util.List;
 @Repository
 public interface OrderInquiryReadMapper extends BaseReadMapper<OrderInquiry> {
 
+    OrderInquiry selectByPrimaryKey(String id);
 }

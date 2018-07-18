@@ -1,15 +1,14 @@
 package com.prostate.order.controller;
 
+import com.prostate.order.entity.GroupA;
+import com.prostate.order.entity.GroupB;
 import com.prostate.order.entity.OrderInquiry;
 import com.prostate.order.service.OrderInquiryService;
 import com.prostate.order.util.UUIDTool;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
@@ -34,7 +33,7 @@ public class OrderInquiryController extends BaseController {
              */
          
     @PostMapping(value = "insert")
-    public Map insert(@Validated OrderInquiry orderInquiry){
+    public Map insert(@Validated({GroupB.class}) OrderInquiry orderInquiry){
         orderInquiry.setId(UUIDTool.getUUID());
         System.out.println(orderInquiry.getId());
        int result= orderInquiryService.insertSelective(orderInquiry);
@@ -129,7 +128,19 @@ public class OrderInquiryController extends BaseController {
      *    @Date:  17:54  2018/7/17
      *    @Params:   * @param null
      */
+    @GetMapping(value = "getOrderById")
+    public Map getOrderById(@RequestParam String id){
+           if (id==null||id.equals("")){
+               return emptyParamResponse();
+           }
+           OrderInquiry orderInquiry=orderInquiryService.selectById(id);
+           if (orderInquiry==null||orderInquiry.equals("")){
+               return queryEmptyResponse();
+           }else {
+               return querySuccessResponse(orderInquiry);
+           }
 
+        }
 
     
          /**
@@ -137,5 +148,36 @@ public class OrderInquiryController extends BaseController {
              *    @Date:  17:55  2018/7/17
              *    @Params:   * @param null
              */
+     @PostMapping(value = "updateOrder")
+    public  Map updateOrder(@Validated({GroupB.class, GroupA.class}) OrderInquiry orderInquiry){
+         if (orderInquiry==null||orderInquiry.equals("")||orderInquiry.getId()==null||orderInquiry.getId().equals("")){
+             return emptyParamResponse();
+         }
+         //需要验证一下传过来的id  医生id 患者id 是否正确
+         OrderInquiry inquiry = orderInquiryService.selectById(orderInquiry.getId());
+         if (inquiry==null||inquiry.equals("")){
+             return queryEmptyResponse();
+         }else {
+            if (inquiry.getDoctorId().equals(orderInquiry.getDoctorId())&&
+                    inquiry.getPatientId().equals(orderInquiry.getPatientId())){
+
+            }else {
+                return queryEmptyResponse();
+            }
+         }
+        int result=orderInquiryService.updateSelective(orderInquiry);
+        if (result>0){
+            //这里做个判断,如果orderInquiry的状态  为已完成,需要调用钱包服务
+
+
+            return updateSuccseeResponse();
+        }else {
+            return updateFailedResponse();
+        }
+
+
+
+     }
+
          
 }

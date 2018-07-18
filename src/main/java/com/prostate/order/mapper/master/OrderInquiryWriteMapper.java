@@ -12,4 +12,5 @@ import org.springframework.stereotype.Repository;
 public interface OrderInquiryWriteMapper extends BaseWriteMapper<OrderInquiry> {
 
 
+    int updateByPrimaryKeySelective(OrderInquiry e);
 }

@@ -29,12 +29,12 @@ public class OrderInquiryServiceImpl implements OrderInquiryService {
 
     @Override
     public int updateSelective(OrderInquiry orderInquiry) {
-        return 0;
+        return orderInquiryWriteMapper.updateByPrimaryKeySelective(orderInquiry);
     }
 
     @Override
     public OrderInquiry selectById(String id) {
-        return null;
+        return orderInquiryReadMapper.selectByPrimaryKey(id);
     }
 
     @Override

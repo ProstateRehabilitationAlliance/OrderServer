@@ -3,21 +3,22 @@ package com.prostate.order.entity;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
+import javax.validation.constraints.Pattern;
 import java.util.Date;
 
 public class OrderInquiry {
-    @Null
+   @NotEmpty(groups = {GroupA.class})
     private String id;
 
-    @NotEmpty
+    @NotEmpty(groups = {GroupB.class})
     private String patientId;
     @NotEmpty
     private String doctorId;
-
+    @NotEmpty
     private String problemDescription;
 
     private String fileUrl;
-
+    @NotEmpty
     private String orderPrice;
 
     private String doctorResponse;
