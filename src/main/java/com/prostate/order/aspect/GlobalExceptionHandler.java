@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
      * @return
      * @throws Exception
      */
-   @ExceptionHandler(value = Exception.class)
+   /*@ExceptionHandler(value = Exception.class)
     public Map<String,Object> allExceptionHandler(HttpServletRequest request, Exception exception) throws Exception {
         resultMap = new LinkedHashMap<>();
         log.error("我报错了：{}",exception.getLocalizedMessage());
@@ -40,8 +40,8 @@ public class GlobalExceptionHandler {
         resultMap.put("errorcode","50000");
         resultMap.put("errormsg",exception.getLocalizedMessage());
         return resultMap;
-    }
-
+    }*/
+    //拦截  validate注解
     @ExceptionHandler(value = BindException.class)
     public Map<String,Object> bindExceptionHandler(HttpServletRequest request, BindException exception) throws Exception {
         resultMap = new LinkedHashMap<>();

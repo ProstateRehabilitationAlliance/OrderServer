@@ -16,7 +16,7 @@ public class SendMessageUtil {
 
     public static void main(String[] args) {
         String [] phone ={"18435138713"};
-        send(1400114511,"15c70ba3ca084c5fc92950eb7851598a7",
+        send(1400114511,"5c70ba3ca084c5fc92950eb7851598a7",
                phone,158220 ,"haha");
     }
 

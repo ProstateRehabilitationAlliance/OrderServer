@@ -1,16 +1,19 @@
 package com.prostate.order.controller;
 
-import com.prostate.order.entity.GroupA;
-import com.prostate.order.entity.GroupB;
-import com.prostate.order.entity.OrderInquiry;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.prostate.order.entity.*;
+import com.prostate.order.feignService.StaticServer;
+import com.prostate.order.feignService.WalletServer;
 import com.prostate.order.service.OrderInquiryService;
+import com.prostate.order.util.JsonUtil;
 import com.prostate.order.util.UUIDTool;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotEmpty;
 import java.util.List;
 import java.util.Map;
 
@@ -25,22 +28,29 @@ import java.util.Map;
 public class OrderInquiryController extends BaseController {
     @Autowired
     private OrderInquiryService orderInquiryService;
+    @Autowired
+    private WalletServer walletServer;
+    @Autowired
+    private StaticServer staticServer;
 
-         /**
-             *    @Description:  创建订单
-             *    @Date:  13:36  2018/7/17
-             *    @Params:   * @param null
-             */
-         
+            /**
+                *    @Description: 创建订单
+                *    @Date:  14:29  2018/7/18
+                *    @Param:   * @param null
+                */
+            
     @PostMapping(value = "insert")
-    public Map insert(@Validated({GroupB.class}) OrderInquiry orderInquiry){
+    public Map insert(@Validated({GroupA.class,GroupB.class}) OrderInquiry orderInquiry){
         orderInquiry.setId(UUIDTool.getUUID());
+        //设置订单状态
+        orderInquiry.setOrderStatus("0");
         System.out.println(orderInquiry.getId());
        int result= orderInquiryService.insertSelective(orderInquiry);
         if(result>=0){
-            return insertSuccseeResponse("");
+            return insertSuccseeResponse(null);
         }
         //创建订单完成,扣钱操作
+
 
         return insertFailedResponse();
     }
@@ -62,7 +72,7 @@ public class OrderInquiryController extends BaseController {
         for (OrderInquiry order:list){
             if (order.getOrderStatus().equals("0")){
                 //患者端查询
-                order.setProblemDescription("内心等待医生回复");
+                order.setDoctorResponse("内心等待医生回复");
             }
         }
         if (list==null||list.equals("")){
@@ -84,6 +94,8 @@ public class OrderInquiryController extends BaseController {
          if (doctorId==null||doctorId.equals("")){
              return emptyParamResponse();
          }
+
+
          OrderInquiry orderInquiry=new OrderInquiry();
          orderInquiry.setDoctorId(doctorId);
          orderInquiry.setOrderStatus("0");
@@ -149,7 +161,7 @@ public class OrderInquiryController extends BaseController {
              *    @Params:   * @param null
              */
      @PostMapping(value = "updateOrder")
-    public  Map updateOrder(@Validated({GroupB.class, GroupA.class}) OrderInquiry orderInquiry){
+    public  Map updateOrder(@Validated({GroupB.class}) OrderInquiry orderInquiry){
          if (orderInquiry==null||orderInquiry.equals("")||orderInquiry.getId()==null||orderInquiry.getId().equals("")){
              return emptyParamResponse();
          }
@@ -168,8 +180,32 @@ public class OrderInquiryController extends BaseController {
         int result=orderInquiryService.updateSelective(orderInquiry);
         if (result>0){
             //这里做个判断,如果orderInquiry的状态  为已完成,需要调用钱包服务
+            DoctorWallet doctorWallet=new DoctorWallet();
+            //查询钱包id
+            System.out.println("orderInquiry实体"+orderInquiry);
+            Map map = walletServer.selectByDoctorId(orderInquiry.getDoctorId());
+            if (!map.get("code").equals("20000")){
+                return map;
+            }
+            String jsonString = JSON.toJSONString(map.get("result"));
+            DoctorWallet wallet= JSON.parseObject(jsonString, DoctorWallet.class);
+            doctorWallet.setId(wallet.getId());
+            doctorWallet.setDoctorId(orderInquiry.getDoctorId());
+            doctorWallet.setWalletBalance(orderInquiry.getOrderPrice());
+            Map m=walletServer.updateBalance(doctorWallet);
+            log.info(m.toString());
+            //添加交易记录
+            ReceiptPayment receiptPayment=new ReceiptPayment();
+            receiptPayment.setWalletId(wallet.getId());
+            //医生钱包增加
+            receiptPayment.setReceiptPaymentType("支付");
+            receiptPayment.setTransactionAmount(orderInquiry.getOrderPrice());
+            receiptPayment.setPaymentType("银行卡");
+            //查询患者名字  未做
+            receiptPayment.setRemark("患者端"+orderInquiry.getPatientId()+" 支付"+orderInquiry.getOrderPrice());
 
-
+            Map  n=walletServer.save(receiptPayment);
+            log.info(n.toString());
             return updateSuccseeResponse();
         }else {
             return updateFailedResponse();
