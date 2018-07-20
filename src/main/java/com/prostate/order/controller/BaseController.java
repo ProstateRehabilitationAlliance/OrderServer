@@ -180,4 +180,12 @@ public class BaseController {
         return resultMap;
     }
 
+    public Map requestCustomResponse(String msg,Object result){
+        resultMap = new LinkedHashMap<>();
+        resultMap.put("code","40004");
+        resultMap.put("msg",msg);
+        resultMap.put("result",result);
+        return resultMap;
+    }
+
 }

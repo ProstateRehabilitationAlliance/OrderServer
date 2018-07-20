@@ -30,8 +30,6 @@ public class OrderInquiryController extends BaseController {
     private OrderInquiryService orderInquiryService;
     @Autowired
     private WalletServer walletServer;
-    @Autowired
-    private StaticServer staticServer;
 
             /**
                 *    @Description: 创建订单
@@ -180,32 +178,37 @@ public class OrderInquiryController extends BaseController {
         int result=orderInquiryService.updateSelective(orderInquiry);
         if (result>0){
             //这里做个判断,如果orderInquiry的状态  为已完成,需要调用钱包服务
-            DoctorWallet doctorWallet=new DoctorWallet();
-            //查询钱包id
-            System.out.println("orderInquiry实体"+orderInquiry);
-            Map map = walletServer.selectByDoctorId(orderInquiry.getDoctorId());
-            if (!map.get("code").equals("20000")){
-                return map;
-            }
-            String jsonString = JSON.toJSONString(map.get("result"));
-            DoctorWallet wallet= JSON.parseObject(jsonString, DoctorWallet.class);
-            doctorWallet.setId(wallet.getId());
-            doctorWallet.setDoctorId(orderInquiry.getDoctorId());
-            doctorWallet.setWalletBalance(orderInquiry.getOrderPrice());
-            Map m=walletServer.updateBalance(doctorWallet);
-            log.info(m.toString());
-            //添加交易记录
-            ReceiptPayment receiptPayment=new ReceiptPayment();
-            receiptPayment.setWalletId(wallet.getId());
-            //医生钱包增加
-            receiptPayment.setReceiptPaymentType("支付");
-            receiptPayment.setTransactionAmount(orderInquiry.getOrderPrice());
-            receiptPayment.setPaymentType("银行卡");
-            //查询患者名字  未做
-            receiptPayment.setRemark("患者端"+orderInquiry.getPatientId()+" 支付"+orderInquiry.getOrderPrice());
+            if (orderInquiry.getOrderStatus().equals("1")){
+                DoctorWallet doctorWallet=new DoctorWallet();
+                //查询钱包id
+                //System.out.println("orderInquiry实体"+orderInquiry);
+                Map map = walletServer.selectByDoctorId(orderInquiry.getDoctorId());
+                if (map.get("code").equals("40004")){
+                    return requestCustomResponse("该医生没有创建钱包",null);
+                }else if (!map.get("code").equals("20000")){
+                    return map;
+                }
+                String jsonString = JSON.toJSONString(map.get("result"));
+                DoctorWallet wallet= JSON.parseObject(jsonString, DoctorWallet.class);
+                doctorWallet.setId(wallet.getId());
+                doctorWallet.setDoctorId(orderInquiry.getDoctorId());
+                doctorWallet.setWalletBalance(orderInquiry.getOrderPrice());
+                Map m=walletServer.updateBalance(doctorWallet);
+                log.info(m.toString());
+                //添加交易记录
+                ReceiptPayment receiptPayment=new ReceiptPayment();
+                receiptPayment.setWalletId(wallet.getId());
+                //医生钱包增加
+                receiptPayment.setReceiptPaymentType("支付");
+                receiptPayment.setTransactionAmount(orderInquiry.getOrderPrice());
+                receiptPayment.setPaymentType("银行卡");
+                //查询患者名字  未做
+                receiptPayment.setRemark("患者端"+orderInquiry.getPatientId()+" 支付"+orderInquiry.getOrderPrice());
 
-            Map  n=walletServer.save(receiptPayment);
-            log.info(n.toString());
+                Map  n=walletServer.save(receiptPayment);
+                log.info(n.toString());
+            }
+
             return updateSuccseeResponse();
         }else {
             return updateFailedResponse();
