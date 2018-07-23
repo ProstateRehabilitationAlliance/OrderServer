@@ -17,9 +17,9 @@ public class SendMessageUtil {
 
     public static void main(String[] args) {
         String [] phone ={"18435138713"};
-        String[] params = {"wawa","2"};
+        String[] params = {"wawaww","3"};
         send(1400114511,"5c70ba3ca084c5fc92950eb7851598a7",
-               phone,158220 ,"haha",params);
+               phone,158220 ,"冯锐个人公众号",params);
     }
 
     /**
@@ -31,7 +31,7 @@ public class SendMessageUtil {
      * @param phoneNumbers  电话号码数组  String [] phone ={"18435138713"};
      * @param templateId    例   158220
      * @param smsSign   例 haha
-     *  @param params      例     {"wawa","2"};
+     *  @param params      例     {"验证码","分钟"};
      */
     public  static String send(int appid, String appkey,
                             String []phoneNumbers, int templateId, String smsSign, String[] params){

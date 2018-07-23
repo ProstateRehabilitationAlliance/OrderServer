@@ -5,5 +5,5 @@ package com.prostate.order.entity;
  * @Description:
  * @Date: Created in 12:58 2018/7/18
  */
-public interface GroupB {
+public interface GroupOutId {
 }

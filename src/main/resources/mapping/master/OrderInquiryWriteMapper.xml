@@ -41,6 +41,9 @@
   </insert>
 
   <insert id="insertSelective" parameterType="com.prostate.order.entity.OrderInquiry">
+    <selectKey keyProperty="id" resultType="string" order="BEFORE">
+      select replace(uuid(), '-', '') as id from dual
+    </selectKey>
     insert into order_inquiry
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">

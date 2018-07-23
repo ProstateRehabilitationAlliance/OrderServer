@@ -1,12 +1,9 @@
 package com.prostate.order.feignService;
 
 import com.prostate.order.entity.DoctorWallet;
-import com.prostate.order.entity.GroupA;
-import com.prostate.order.entity.GroupB;
 import com.prostate.order.entity.ReceiptPayment;
 import com.prostate.order.feignService.impl.WalletServerHystrix;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;

@@ -5,28 +5,25 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
-import javax.validation.constraints.Pattern;
 import java.util.Date;
 @Getter
 @Setter
 @ToString
 public class OrderInquiry extends BaseEntity{
-   @Null(groups = {GroupA.class})
+   @NotEmpty(groups = {GroupId.class})
     private String id;
 
-    @NotEmpty(groups = {GroupB.class})
+    @NotEmpty(groups = {GroupOutId.class})
     private String patientId;
-    @NotEmpty(groups = {GroupB.class})
+    @NotEmpty(groups = {GroupOutId.class})
     private String doctorId;
-    @NotEmpty(groups = {GroupB.class})
+
     private String problemDescription;
 
     private String fileUrl;
-    @NotEmpty(groups = {GroupB.class})
+    @NotEmpty(groups = {GroupOutId.class})
     private String orderPrice;
-
+    @NotEmpty(groups = {GroupOutId.class})
     private String doctorResponse;
 
     private String orderStatus;

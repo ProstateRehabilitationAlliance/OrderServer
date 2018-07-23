@@ -13,7 +13,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableEurekaServer
 @SpringBootApplication
 @EnableCaching
-//@MapperScan(basePackages = {"com.prostate.order.mapper.slave","com.prostate.order.mapper.master"})
 public class OrderApplication {
 
 	public static void main(String[] args) {

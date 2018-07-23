@@ -1,14 +1,9 @@
 package com.prostate.order.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prostate.order.entity.*;
-import com.prostate.order.feignService.StaticServer;
 import com.prostate.order.feignService.WalletServer;
 import com.prostate.order.service.OrderInquiryService;
-import com.prostate.order.util.JsonUtil;
-import com.prostate.order.util.UUIDTool;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -31,115 +26,120 @@ public class OrderInquiryController extends BaseController {
     @Autowired
     private WalletServer walletServer;
 
-            /**
-                *    @Description: 创建订单
-                *    @Date:  14:29  2018/7/18
-                *    @Param:   * @param null
-                */
-            
+
+        /**
+            *    @description:   创建订单
+            *    @date:  16:52  2018/7/23
+            *    @param:   * @param orderInquiry
+            */
+
     @PostMapping(value = "insert")
-    public Map insert(@Validated({GroupA.class,GroupB.class}) OrderInquiry orderInquiry){
-        orderInquiry.setId(UUIDTool.getUUID());
-        //设置订单状态
-        orderInquiry.setOrderStatus("0");
-        System.out.println(orderInquiry.getId());
+    public Map insert(@Validated({GroupOutId.class}) OrderInquiry orderInquiry){
+
        int result= orderInquiryService.insertSelective(orderInquiry);
         if(result>=0){
             return insertSuccseeResponse(null);
         }
         //创建订单完成,扣钱操作
 
-
         return insertFailedResponse();
     }
-     /**
-         *    @Description:  微信用户查询订单 (这里包括已完成,为完成的订单)
-         *    @Date:  16:38  2018/7/17
-         *    @Params:   * @param null
-         */
-     
+
+
+        /**
+            *    @description:  微信用户查询订单 (这里包括已完成,为完成的订单)
+            *    @date:  16:53  2018/7/23
+            *    @param:   * @param null
+            */
+
     @PostMapping(value = "listByWechatUser")
-    public Map listByWechatUser(@RequestParam String patientId){
-        if (patientId==null||patientId.equals("")){
+    public Map listByWechatUser(String token){
+        if (token==null||token.equals("")){
             return emptyParamResponse();
         }
         OrderInquiry orderInquiry=new OrderInquiry();
-        orderInquiry.setPatientId(patientId);
-        List<OrderInquiry> list=orderInquiryService.selectByParams(orderInquiry);
+        orderInquiry.setPatientId(token);
+        List<OrderInquiry> orderInquiries=orderInquiryService.selectByParams(orderInquiry);
         //如果未完成订单,患者端看不到医生编辑的内容
-        for (OrderInquiry order:list){
-            if (order.getOrderStatus().equals("0")){
+        for (OrderInquiry order:orderInquiries){
+            if (order.getOrderStatus().equals("00")||
+                    order.getOrderStatus().equals("01")){
                 //患者端查询
                 order.setDoctorResponse("内心等待医生回复");
             }
         }
-        if (list==null||list.equals("")){
-            return queryEmptyResponse();
-        }else if (list.size()==0){
+        if (orderInquiries.isEmpty()==true){
             return queryEmptyResponse();
         }else {
-            return querySuccessResponse(list);
+            return querySuccessResponse(orderInquiries);
         }
     }
-     /**
-         *    @Description:  医生端查询未完成订单
-         *    @Date:  17:54  2018/7/17
-         *    @Params:   * @param null
-         */
+
+
+        /**
+            *    @description:      医生端查询未完成订单
+            *    @date:  16:53  2018/7/23
+            *    @param:   * @param null
+            */
 
      @PostMapping(value = "listByDoctorUnfinished")
-     public Map listByDoctorUnfinished(@RequestParam String doctorId){
-         if (doctorId==null||doctorId.equals("")){
+     public Map listByDoctorUnfinished(String token){
+         if (token==null||token.equals("")){
              return emptyParamResponse();
          }
-
-
+         //查询来自网络订单
          OrderInquiry orderInquiry=new OrderInquiry();
-         orderInquiry.setDoctorId(doctorId);
-         orderInquiry.setOrderStatus("0");
-         List<OrderInquiry> list=orderInquiryService.selectByParams(orderInquiry);
-         if (list==null||list.equals("")){
-             return queryEmptyResponse();
-         }else if (list.size()==0){
+         orderInquiry.setDoctorId(token);
+         orderInquiry.setOrderStatus("00");
+         List<OrderInquiry> ordersFromInternet=orderInquiryService.selectByParams(orderInquiry);
+         //查询转诊订单
+         OrderInquiry inquiry=new OrderInquiry();
+         orderInquiry.setDoctorId(token);
+         orderInquiry.setOrderStatus("01");
+         List<OrderInquiry> ordersFromTransferingConsultation=orderInquiryService.selectByParams(orderInquiry);
+         ordersFromInternet.addAll(ordersFromTransferingConsultation);
+         if (ordersFromInternet.isEmpty()==true){
              return queryEmptyResponse();
          }else {
-             return querySuccessResponse(list);
+             return querySuccessResponse(ordersFromInternet);
          }
      }
 
 
 
-    /**
-     *    @Description:  医生端 查询已完成订单
-     *    @Date:  17:54  2018/7/17
-     *    @Params:   * @param null
-     */
+
+
+       /**
+           *    @description:       医生端 查询已完成订单
+           *    @date:  16:53  2018/7/23
+           *    @param:   * @param token
+           */
 
     @PostMapping(value = "listByDoctorFinished")
-    public Map listByDoctorFinished(@RequestParam String doctorId){
-        if (doctorId==null||doctorId.equals("")){
+    public Map listByDoctorFinished(String token){
+        if (token==null||token.equals("")){
             return emptyParamResponse();
         }
         OrderInquiry orderInquiry=new OrderInquiry();
-        orderInquiry.setDoctorId(doctorId);
+        orderInquiry.setDoctorId(token);
         orderInquiry.setOrderStatus("1");
         List<OrderInquiry> list=orderInquiryService.selectByParams(orderInquiry);
-        if (list==null||list.equals("")){
-            return queryEmptyResponse();
-        }else if (list.size()==0){
+        if (list.isEmpty()==true){
             return queryEmptyResponse();
         }else {
             return querySuccessResponse(list);
         }
     }
 
-    /**
-     *    @Description:  ID查询订单详情
-     *    @Date:  17:54  2018/7/17
-     *    @Params:   * @param null
-     */
+
+       /**
+           *    @description:       ID查询订单详情
+           *    @date:  16:54  2018/7/23
+           *    @param:   * @param id
+           */
+
     @GetMapping(value = "getOrderById")
-    public Map getOrderById(@RequestParam String id){
+    public Map getOrderById(String id){
            if (id==null||id.equals("")){
                return emptyParamResponse();
            }
@@ -153,23 +153,21 @@ public class OrderInquiryController extends BaseController {
         }
 
     
+
          /**
-             *    @Description:  订单修改
-             *    @Date:  17:55  2018/7/17
-             *    @Params:   * @param null
+             *    @description:     医生端订单修改
+             *    @date:  16:54  2018/7/23
+             *    @param:   * @param null
              */
+
      @PostMapping(value = "updateOrder")
-    public  Map updateOrder(@Validated({GroupB.class}) OrderInquiry orderInquiry){
-         if (orderInquiry==null||orderInquiry.equals("")||orderInquiry.getId()==null||orderInquiry.getId().equals("")){
-             return emptyParamResponse();
-         }
+    public  Map updateOrder(@Validated({GroupId.class,GroupOutId.class}) OrderInquiry orderInquiry){
          //需要验证一下传过来的id  医生id 患者id 是否正确
          OrderInquiry inquiry = orderInquiryService.selectById(orderInquiry.getId());
          if (inquiry==null||inquiry.equals("")){
              return queryEmptyResponse();
          }else {
-            if (inquiry.getDoctorId().equals(orderInquiry.getDoctorId())&&
-                    inquiry.getPatientId().equals(orderInquiry.getPatientId())){
+            if (inquiry.getDoctorId().equals(orderInquiry.getDoctorId())){
 
             }else {
                 return queryEmptyResponse();
@@ -181,7 +179,6 @@ public class OrderInquiryController extends BaseController {
             if (orderInquiry.getOrderStatus().equals("1")){
                 DoctorWallet doctorWallet=new DoctorWallet();
                 //查询钱包id
-                //System.out.println("orderInquiry实体"+orderInquiry);
                 Map map = walletServer.selectByDoctorId(orderInquiry.getDoctorId());
                 if (map.get("code").equals("40004")){
                     return requestCustomResponse("该医生没有创建钱包",null);
