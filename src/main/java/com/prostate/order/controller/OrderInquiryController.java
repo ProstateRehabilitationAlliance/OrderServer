@@ -123,11 +123,11 @@ public class OrderInquiryController extends BaseController {
         OrderInquiry orderInquiry=new OrderInquiry();
         orderInquiry.setDoctorId(token);
         orderInquiry.setOrderStatus("1");
-        List<OrderInquiry> list=orderInquiryService.selectByParams(orderInquiry);
-        if (list.isEmpty()==true){
+        List<OrderInquiry> orderInquiryList=orderInquiryService.selectByParams(orderInquiry);
+        if (orderInquiryList.isEmpty()==true){
             return queryEmptyResponse();
         }else {
-            return querySuccessResponse(list);
+            return querySuccessResponse(orderInquiryList);
         }
     }
 
