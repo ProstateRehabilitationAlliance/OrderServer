@@ -18,7 +18,7 @@ import javax.sql.DataSource;
  * 读操作数据源
  */
 @Configuration
-@MapperScan(basePackages = "com.prostate.order.mapper.slave", sqlSessionTemplateRef  = "readPraSqlSessionTemplate")
+@MapperScan(basePackages = "com.prostate.order.mapper.slave", sqlSessionTemplateRef = "readPraSqlSessionTemplate")
 public class ReadPraDataSourceConfiguration {
 
     @Value("${spring.datasource.readPra.driver-class-name}")

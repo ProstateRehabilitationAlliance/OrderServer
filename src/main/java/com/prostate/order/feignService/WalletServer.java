@@ -22,8 +22,8 @@ public interface WalletServer {
     @PostMapping(value = "/doctorWallet/updateBalance")
     public Map updateBalance(@RequestBody DoctorWallet doctorWallet);
 
-    @GetMapping("/doctorWallet/selectByDoctorId")
-    public Map selectByDoctorId(@RequestParam("doctorId") String doctorId);
+    @GetMapping("/doctorWallet/selectByToken")
+    public Map selectByToken(@RequestParam("token") String doctorId);
 
     @PostMapping(value = "/receiptPayment/save")
     public Map save(@RequestBody ReceiptPayment receiptPayment);

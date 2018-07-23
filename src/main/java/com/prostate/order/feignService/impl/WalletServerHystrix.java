@@ -39,7 +39,7 @@ public class WalletServerHystrix extends BaseServerHystrix implements WalletServ
        */
 
     @Override
-    public Map selectByDoctorId(String doctorId) {
+    public Map selectByToken(String doctorId) {
         return resultMap;
     }
 }
