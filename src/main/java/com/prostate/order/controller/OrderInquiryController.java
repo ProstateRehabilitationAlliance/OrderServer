@@ -2,6 +2,7 @@ package com.prostate.order.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.prostate.order.entity.*;
+import com.prostate.order.feignService.RecordServer;
 import com.prostate.order.feignService.WalletServer;
 import com.prostate.order.service.OrderInquiryService;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,9 @@ public class OrderInquiryController extends BaseController {
     private OrderInquiryService orderInquiryService;
     @Autowired
     private WalletServer walletServer;
+    @Autowired
+    private RecordServer recordServer;
+
 
 
     /**
@@ -35,8 +39,9 @@ public class OrderInquiryController extends BaseController {
      */
 
     @PostMapping(value = "insert")
-    public Map insert(@Validated({GroupOutId.class}) OrderInquiry orderInquiry) {
-
+    public Map insert(@Validated({GroupOutId.class}) OrderInquiry orderInquiry,
+                      String token) {
+        orderInquiry.setCreateUser(token);
         int result = orderInquiryService.insertSelective(orderInquiry);
         if (result >= 0) {
             return insertSuccseeResponse(null);
@@ -164,7 +169,12 @@ public class OrderInquiryController extends BaseController {
         if (inquiry == null || inquiry.equals("")) {
             return queryEmptyResponse();
         } else {
-            if (inquiry.getDoctorId().equals(orderInquiry.getDoctorId())) {
+            //判断订单状态  如果不是  00  或者  01  医生不能修改订单状态
+            if (inquiry.getDoctorId().equals(orderInquiry.getDoctorId())&&
+                    !inquiry.getOrderStatus().equals("1")&&
+                    !inquiry.getOrderStatus().equals("2")) {
+                //订单价格不可变
+                orderInquiry.setOrderPrice(inquiry.getOrderPrice());
                 orderInquiry.setUpdateTime(new Date());
                 orderInquiry.setUpdateUser(orderInquiry.getDoctorId());
             } else {
@@ -189,6 +199,8 @@ public class OrderInquiryController extends BaseController {
                 doctorWallet.setId(wallet.getId());
                 doctorWallet.setDoctorId(orderInquiry.getDoctorId());
                 doctorWallet.setWalletBalance(orderInquiry.getOrderPrice());
+
+                //调用修改钱包的服务
                 Map m = walletServer.updateBalance(doctorWallet, token);
                 log.info(m.toString());
                 //添加交易记录
@@ -201,8 +213,23 @@ public class OrderInquiryController extends BaseController {
                 //查询患者名字  未做
                 receiptPayment.setRemark("患者端" + orderInquiry.getPatientId() + " 支付" + orderInquiry.getOrderPrice());
 
+                //调用增加交易记录的服务
                 Map n = walletServer.save(receiptPayment, token);
                 log.info(n.toString());
+                Map recordResult=null;
+                System.out.println("!!!!"+orderInquiry.getPatientId()+"    "+token);
+                if (inquiry.getOrderStatus().equals("00")){
+                    //判断该订单之前状态为 00  来源网络
+                    recordResult=recordServer.addUserPatient(orderInquiry.getPatientId(),token,"网络");
+                    log.info("record服务调用"+recordResult.toString());
+                }else if (inquiry.getOrderStatus().equals("01")){
+                    //判断该订单之前状态为 01  来源转诊
+                    recordResult=recordServer.addUserPatient(orderInquiry.getPatientId(),token,"转诊");
+                    log.info("record服务调用"+recordResult.toString());
+                }else {
+
+                }
+
             }
 
             return updateSuccseeResponse();

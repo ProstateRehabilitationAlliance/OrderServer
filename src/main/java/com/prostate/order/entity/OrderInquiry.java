@@ -22,9 +22,9 @@ public class OrderInquiry extends BaseEntity {
     private String problemDescription;
 
     private String fileUrl;
-    @NotEmpty(groups = {GroupOutId.class})
+    //@NotEmpty(groups = {GroupOutId.class})
     private String orderPrice;
-    @NotEmpty(groups = {GroupOutId.class})
+    //@NotEmpty(groups = {GroupOutId.class})
     private String doctorResponse;
 
     private String orderStatus;
