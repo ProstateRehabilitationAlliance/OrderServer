@@ -6,11 +6,12 @@ import lombok.ToString;
 
 import javax.validation.constraints.NotEmpty;
 import java.util.Date;
+
 @Getter
 @Setter
 @ToString
-public class OrderInquiry extends BaseEntity{
-   @NotEmpty(groups = {GroupId.class})
+public class OrderInquiry extends BaseEntity {
+    @NotEmpty(groups = {GroupId.class})
     private String id;
 
     @NotEmpty(groups = {GroupOutId.class})

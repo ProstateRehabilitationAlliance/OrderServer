@@ -4,6 +4,7 @@ import com.prostate.order.entity.DoctorWallet;
 import com.prostate.order.entity.ReceiptPayment;
 import com.prostate.order.feignService.WalletServer;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
 
@@ -20,7 +21,7 @@ public class WalletServerHystrix extends BaseServerHystrix implements WalletServ
      *    @Param:   * @param doctorWallet
      */
     @Override
-    public Map updateBalance(DoctorWallet doctorWallet) {
+    public Map updateBalance(DoctorWallet doctorWallet,@RequestParam("token")String token) {
         return resultMap;
     }
     /**
@@ -29,7 +30,7 @@ public class WalletServerHystrix extends BaseServerHystrix implements WalletServ
      *    @Param:   * @param receiptPayment
      */
     @Override
-    public Map save(ReceiptPayment receiptPayment) {
+    public Map save(ReceiptPayment receiptPayment,@RequestParam("token")String token) {
         return resultMap;
     }
    /**

@@ -158,7 +158,7 @@ public class OrderInquiryController extends BaseController {
      */
 
     @PostMapping(value = "updateOrder")
-    public Map updateOrder(@Validated({GroupId.class, GroupOutId.class}) OrderInquiry orderInquiry) {
+    public Map updateOrder(@Validated({GroupId.class, GroupOutId.class}) OrderInquiry orderInquiry, String token) {
         //需要验证一下传过来的id  医生id 患者id 是否正确
         OrderInquiry inquiry = orderInquiryService.selectById(orderInquiry.getId());
         if (inquiry == null || inquiry.equals("")) {
@@ -189,7 +189,7 @@ public class OrderInquiryController extends BaseController {
                 doctorWallet.setId(wallet.getId());
                 doctorWallet.setDoctorId(orderInquiry.getDoctorId());
                 doctorWallet.setWalletBalance(orderInquiry.getOrderPrice());
-                Map m = walletServer.updateBalance(doctorWallet);
+                Map m = walletServer.updateBalance(doctorWallet, token);
                 log.info(m.toString());
                 //添加交易记录
                 ReceiptPayment receiptPayment = new ReceiptPayment();
@@ -201,7 +201,7 @@ public class OrderInquiryController extends BaseController {
                 //查询患者名字  未做
                 receiptPayment.setRemark("患者端" + orderInquiry.getPatientId() + " 支付" + orderInquiry.getOrderPrice());
 
-                Map n = walletServer.save(receiptPayment);
+                Map n = walletServer.save(receiptPayment, token);
                 log.info(n.toString());
             }
 
