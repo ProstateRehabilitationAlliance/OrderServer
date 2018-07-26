@@ -20,4 +20,7 @@ public interface RecordServer {
                        @RequestParam("userId") String userId,
                        @RequestParam("patientSource") String patientSource);
 
+    @PostMapping(value = "/patient/getPatientDetailById")
+    public Map getPatientDetailById(@RequestParam("patientId") String patientId);
+
 }

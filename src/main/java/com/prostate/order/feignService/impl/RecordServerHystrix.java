@@ -16,4 +16,9 @@ public class RecordServerHystrix extends BaseServerHystrix implements RecordServ
     public Map addUserPatient(String patientId, String userId, String patientSource) {
         return resultMap;
     }
+
+    @Override
+    public Map getPatientDetailById(String patientId) {
+        return resultMap;
+    }
 }

@@ -23,7 +23,7 @@ public interface WalletServer {
     public Map updateBalance(@RequestBody DoctorWallet doctorWallet,@RequestParam("token")String token);
 
     @GetMapping("/doctorWallet/selectByToken")
-    public Map selectByToken(@RequestParam("token") String doctorId);
+    public Map selectByToken(@RequestParam("token") String token);
 
     @PostMapping(value = "/receiptPayment/save")
     public Map save(@RequestBody ReceiptPayment receiptPayment,@RequestParam("token")String token);
