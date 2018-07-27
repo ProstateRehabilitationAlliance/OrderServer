@@ -182,7 +182,7 @@ public class BaseController {
 
     public Map requestCustomResponse(String msg,Object result){
         resultMap = new LinkedHashMap<>();
-        resultMap.put("code","40004");
+        resultMap.put("code","40010");
         resultMap.put("msg",msg);
         resultMap.put("result",result);
         return resultMap;

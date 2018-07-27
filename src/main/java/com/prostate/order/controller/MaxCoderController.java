@@ -1,3 +1,4 @@
+/*
 package com.prostate.order.controller;
 
 
@@ -46,9 +47,11 @@ public class MaxCoderController extends BaseController {
     }
 
 
-    /**
+    */
+/**
      * 患者 创建订单
-     */
+     *//*
+
     @PostMapping(value = "createOrder")
     public Map createOrder(@Validated({GroupOutId.class}) OrderInquiry orderInquiry, String token) {
         //数据插入对象 赋值
@@ -62,12 +65,16 @@ public class MaxCoderController extends BaseController {
         return insertFailedResponse();
     }
 
-    /**
+    */
+/**
      * 信用户 查询订单列表
-     */
+     *//*
+
     @PostMapping(value = "getOrderList")
     public Map getOrderList(String token) {
-        //创建查询条件
+        */
+/*//*
+/创建查询条件
         OrderInquiry orderInquiry = new OrderInquiry();
         //数据插入对象 赋值
         orderInquiry.setCreateUser(token);
@@ -78,14 +85,17 @@ public class MaxCoderController extends BaseController {
             return queryEmptyResponse();
         }
         List<OrderInquiryListBean> orderInquiryListBeanList = orderListBuilder(orderInquiryList);
+*//*
 
-        return querySuccessResponse(orderInquiryListBeanList);
+        return querySuccessResponse(null);
     }
 
 
-    /**
+    */
+/**
      * 信用户 查询订单详情
-     */
+     *//*
+
     @PostMapping(value = "getOrderDetail")
     public Map getOrderDetail(String orderId) {
         //调用insert 服务 向数据库插入数据
@@ -99,9 +109,11 @@ public class MaxCoderController extends BaseController {
         return querySuccessResponse(orderInquiry);
     }
 
-    /**
+    */
+/**
      * 医生端查询 问诊订单
-     */
+     *//*
+
     @PostMapping(value = "getOrderInquiryList")
     public Map getOrderInquiryList(String token) {
         OrderInquiry orderInquiry = new OrderInquiry();
@@ -116,9 +128,11 @@ public class MaxCoderController extends BaseController {
         }
     }
 
-    /**
+    */
+/**
      * 医生端查询 转诊订单
-     */
+     *//*
+
     @PostMapping(value = "getOrderReferralList")
     public Map getOrderReferralList(String token) {
         OrderInquiry orderInquiry = new OrderInquiry();
@@ -133,12 +147,14 @@ public class MaxCoderController extends BaseController {
     }
 
 
-    /**
+    */
+/**
      * 组装 订单列表信息
      *
      * @param orderInquiryList
      * @return
-     */
+     *//*
+
     private List<OrderInquiryListBean> orderListBuilder(List<OrderInquiry> orderInquiryList) {
         List<OrderInquiryListBean> orderInquiryListBeanList = new ArrayList<>();
         for (OrderInquiry inquiry : orderInquiryList) {
@@ -150,3 +166,4 @@ public class MaxCoderController extends BaseController {
         return orderInquiryListBeanList;
     }
 }
+*/

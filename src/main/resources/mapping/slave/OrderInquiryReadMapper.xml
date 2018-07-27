@@ -10,6 +10,7 @@
         <result column="order_price" jdbcType="VARCHAR" property="orderPrice"/>
         <result column="doctor_response" jdbcType="VARCHAR" property="doctorResponse"/>
         <result column="order_status" jdbcType="VARCHAR" property="orderStatus"/>
+        <result column="order_type" jdbcType="VARCHAR" property="orderType"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
@@ -18,11 +19,10 @@
         <result column="delete_user" jdbcType="VARCHAR" property="deleteUser"/>
         <result column="del_flag" jdbcType="VARCHAR" property="delFlag"/>
     </resultMap>
-    <!--, create_time, create_user, update_time, update_user, delete_time, delete_user,
-      del_flag-->
     <sql id="Base_Column_List">
     id, patient_id, doctor_id, problem_description, file_url, order_price, doctor_response, 
-    order_status
+    order_status,order_type, create_time, create_user, update_time, update_user, delete_time, delete_user,
+      del_flag
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
@@ -36,15 +36,56 @@
         <include refid="Base_Column_List"/>
         from order_inquiry
         <where>
-            <if test="patientId!=null and patientId!=''">
-                AND patient_id = #{patientId,jdbcType=VARCHAR}
+            <if test="id != null and id!=''">
+                AND id=#{id,jdbcType=VARCHAR}
             </if>
-            <if test="doctorId!=null and doctorId!=''">
-                AND doctor_id = #{doctorId,jdbcType=VARCHAR}
+            <if test="patientId != null and patientId!=''">
+                AND patient_id=#{patientId,jdbcType=VARCHAR}
             </if>
-            <if test="orderStatus!=null and orderStatus!=''">
-                AND order_status = #{orderStatus,jdbcType=VARCHAR}
+
+            <if test="doctorId != null and doctorId!=''">
+                AND doctor_id= #{doctorId,jdbcType=VARCHAR}
             </if>
+            <if test="problemDescription != null and problemDescription!=''">
+                AND problem_description= #{problemDescription,jdbcType=VARCHAR}
+            </if>
+            <if test="fileUrl != null and fileUrl!=''">
+                AND file_url=#{fileUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="orderPrice != null and orderPrice!=''">
+                AND order_price=#{orderPrice,jdbcType=VARCHAR}
+            </if>
+            <if test="doctorResponse != null and doctorResponse!=''">
+                AND doctor_response=#{doctorResponse,jdbcType=VARCHAR}
+            </if>
+            <if test="orderStatus != null and orderStatus!=''">
+                AND order_status=#{orderStatus,jdbcType=VARCHAR}
+            </if>
+            <if test="orderType != null and orderType!=''">
+                AND order_type=#{orderType,jdbcType=VARCHAR}
+            </if>
+            <if test="createTime != null and createTime!=''">
+                AND create_time=#{createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="createUser != null and createUser!=''">
+                AND create_user=#{createUser,jdbcType=VARCHAR}
+            </if>
+            <if test="updateTime != null and updateTime!=''">
+                AND update_time=#{updateTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="updateUser != null and updateUser!=''">
+                AND update_user=#{updateUser,jdbcType=VARCHAR}
+            </if>
+            <if test="deleteTime != null and deleteTime!=''">
+                AND delete_time=#{deleteTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="deleteUser != null and deleteUser!=''">
+                AND delete_user=#{deleteUser,jdbcType=VARCHAR}
+            </if>
+            <if test="delFlag != null and delFlag!=''">
+                AND del_flag=#{delFlag,jdbcType=VARCHAR}
+            </if>
+
         </where>
         ORDER BY update_time DESC
     </select>

@@ -11,6 +11,7 @@
         <result column="order_price" jdbcType="VARCHAR" property="orderPrice"/>
         <result column="doctor_response" jdbcType="VARCHAR" property="doctorResponse"/>
         <result column="order_status" jdbcType="VARCHAR" property="orderStatus"/>
+        <result column="order_type" jdbcType="VARCHAR" property="orderType"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
@@ -70,6 +71,9 @@
             <if test="orderStatus != null">
                 order_status,
             </if>
+            <if test="orderType != null">
+                order_type,
+            </if>
             <if test="createTime != null">
                 create_time,
             </if>
@@ -116,6 +120,9 @@
             </if>
             <if test="orderStatus != null">
                 #{orderStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="orderType != null">
+                #{orderType,jdbcType=VARCHAR},
             </if>
             <if test="createTime != null">
                 #{createTime,jdbcType=TIMESTAMP},
@@ -164,6 +171,9 @@
             </if>
             <if test="orderStatus != null">
                 order_status = #{orderStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="orderType != null">
+                order_type= #{orderType,jdbcType=VARCHAR},
             </if>
             <if test="createTime != null">
                 create_time = #{createTime,jdbcType=TIMESTAMP},

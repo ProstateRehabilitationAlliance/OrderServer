@@ -18,16 +18,16 @@ public class OrderInquiry extends BaseEntity {
     private String patientId;
     @NotEmpty(groups = {GroupOutId.class})
     private String doctorId;
-
+    @NotEmpty(groups = {GroupOutId.class})
     private String problemDescription;
-
     private String fileUrl;
-    //@NotEmpty(groups = {GroupOutId.class})
+    @NotEmpty(groups = {GroupOutId.class})
     private String orderPrice;
-    //@NotEmpty(groups = {GroupOutId.class})
     private String doctorResponse;
 
     private String orderStatus;
+
+    private String orderType;
 
     private Date createTime;
 
